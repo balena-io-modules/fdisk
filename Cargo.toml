@@ -2,8 +2,9 @@
 name = "fdisk"
 version = "0.1.0"
 authors = ["Aaron Brodersen <aaron@resin.io>"]
-license = "MIT/Apache-2.0"
+license = "Apache-2.0"
 keywords = ["fdisk", "partition", "mbr", "gpt"]
+readme = "README.md"
 description = """
 Rust safe bindings to libfdisk for reading and modifying
 MBR and GPT partition tables.
