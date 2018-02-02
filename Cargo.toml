@@ -1,0 +1,17 @@
+[package]
+name = "fdisk"
+version = "0.1.0"
+authors = ["Aaron Brodersen <aaron@resin.io>"]
+license = "MIT/Apache-2.0"
+keywords = ["fdisk", "partition", "mbr", "gpt"]
+description = """
+Rust safe bindings to libfdisk for reading and modifying
+MBR and GPT partition tables.
+"""
+categories = ["api-bindings"]
+
+[workspace]
+
+[dependencies]
+libc = "0.2"
+fdisk-sys = { version = "0.1", path = "fdisk-sys" }
