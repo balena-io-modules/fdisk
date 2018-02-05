@@ -16,3 +16,4 @@ categories = ["api-bindings"]
 [dependencies]
 libc = "0.2"
 fdisk-sys = { version = "0.1", path = "fdisk-sys" }
+error-chain = "0.11"
