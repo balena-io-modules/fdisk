@@ -33,6 +33,8 @@ impl Context {
             return Err(Error::last_os_error());
         }
 
+        unsafe { ffi::fdisk_ref_table(table); }
+
         Ok(Table { ptr: table })
     }
 }

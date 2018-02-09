@@ -28,6 +28,26 @@ impl Context {
             Ok(())
         }
     }
+
+    pub fn get_first_lba(&mut self) -> u64 {
+        unsafe { ffi::fdisk_get_first_lba(self.ptr) }
+    }
+
+    pub fn get_last_lba(&mut self) -> u64 {
+        unsafe { ffi::fdisk_get_last_lba(self.ptr) }
+    }
+
+    pub fn get_nsectors(&mut self) -> u64 {
+        unsafe { ffi::fdisk_get_nsectors(self.ptr) }
+    }
+
+    pub fn get_physector_size(&mut self) -> u64 {
+        unsafe { ffi::fdisk_get_physector_size(self.ptr) }
+    }
+
+    pub fn get_sector_size(&mut self) -> u64 {
+        unsafe { ffi::fdisk_get_sector_size(self.ptr) }
+    }
 }
 
 impl Drop for Context {
