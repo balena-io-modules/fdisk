@@ -35,14 +35,18 @@ impl Drop for Table {
 
 impl Context {
     pub fn get_partitions(&mut self) -> Result<Table> {
-        let mut table: *mut ffi::fdisk_table = unsafe { mem::zeroed() };
-        if unsafe { ffi::fdisk_get_partitions(self.ptr, &mut table) } != 0 {
-            return Err(Error::last_os_error());
+        let mut table = unsafe { ffi::fdisk_new_table() };
+        match unsafe { ffi::fdisk_get_partitions(self.ptr, &mut table) } {
+            0 => Ok(Table { ptr: table }),
+            _ => Err(Error::last_os_error()),
         }
+    }
 
-        unsafe { ffi::fdisk_ref_table(table); }
-
-        Ok(Table { ptr: table })
+    pub fn apply_table(&mut self, table: &mut Table) -> Result<()> {
+        match unsafe { ffi::fdisk_apply_table(self.ptr, table.ptr) } {
+            0 => Ok(()),
+            _ => Err(Error::last_os_error()),
+        }
     }
 }
 
