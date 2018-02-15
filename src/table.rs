@@ -18,6 +18,13 @@ impl Table {
             ptr: unsafe { ffi::fdisk_new_iter(ffi::FDISK_ITER_FORWARD as i32) }
         }
     }
+
+    pub fn remove_partition(&mut self, partition: &mut Partition) -> Result<()> {
+        match unsafe { ffi::fdisk_table_remove_partition(self.ptr, partition.ptr) } {
+            0 => Ok(()),
+            _ => Err(Error::last_os_error()),
+        }
+    }
 }
 
 impl Drop for Table {
@@ -50,7 +57,10 @@ impl<'a> Iterator for Iter<'a> {
     fn next(&mut self) -> Option<Self::Item> {
         let mut ptr: *mut ffi::fdisk_partition = unsafe { mem::zeroed() };
         match unsafe { ffi::fdisk_table_next_partition(self.table.ptr, self.ptr, &mut ptr) } {
-            0 => Some(Partition { ptr: ptr }),
+            0 => {
+                unsafe { ffi::fdisk_ref_partition(ptr) };
+                Some(Partition { ptr: ptr })
+            },
             _ => None,
         }
     }
