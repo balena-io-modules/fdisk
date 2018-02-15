@@ -29,6 +29,20 @@ impl Context {
         }
     }
 
+    pub fn disable_dialogs(&mut self, disable: bool) -> Result<()> {
+        match unsafe { ffi::fdisk_disable_dialogs(self.ptr, disable as c_int) } {
+            0 => Ok(()),
+            _ => Err(Error::last_os_error())
+        }
+    }
+
+    pub fn set_last_lba(&mut self, sector: u64) -> Result<()> {
+        match unsafe { ffi::fdisk_set_last_lba(self.ptr, sector) } {
+            0 => Ok(()),
+            _ => Err(Error::last_os_error())
+        }
+    }
+
     pub fn get_first_lba(&mut self) -> u64 {
         unsafe { ffi::fdisk_get_first_lba(self.ptr) }
     }

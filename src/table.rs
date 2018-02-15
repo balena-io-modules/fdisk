@@ -5,7 +5,7 @@ use context::Context;
 use partition::Partition;
 
 use std::mem;
-use std::io::{Error, ErrorKind, Result};
+use std::io::{Error, Result};
 
 pub struct Table {
     ptr: *mut ffi::fdisk_table,

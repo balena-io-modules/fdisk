@@ -6,6 +6,7 @@ extern crate error_chain;
 pub mod context;
 pub mod table;
 pub mod partition;
+pub mod label;
 
 pub mod error {
     error_chain!{}

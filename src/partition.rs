@@ -2,11 +2,9 @@
 use ffi;
 
 use error::*;
-use context::Context;
 
 use std::io::Error as IOError;
 use std::ffi::CStr;
-use std::mem;
 
 pub struct Partition {
     pub(crate) ptr: *mut ffi::fdisk_partition,
