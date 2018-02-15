@@ -29,6 +29,13 @@ impl Context {
         }
     }
 
+    pub fn deassign_device(&mut self, no_sync: bool) -> Result<()> {
+        match unsafe { ffi::fdisk_deassign_device(self.ptr, no_sync as c_int) } {
+            0 => Ok(()),
+            _ => Err(Error::last_os_error()),
+        }
+    }
+
     pub fn disable_dialogs(&mut self, disable: bool) -> Result<()> {
         match unsafe { ffi::fdisk_disable_dialogs(self.ptr, disable as c_int) } {
             0 => Ok(()),
