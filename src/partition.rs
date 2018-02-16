@@ -102,7 +102,7 @@ impl Context {
     pub fn delete_all_partitions(&mut self) -> Result<()> {
         match unsafe { ffi::fdisk_delete_all_partitions(self.ptr) } {
             0 => Ok(()),
-            _ => Err("unable to delete partitions".into()),
+            x => Err(ErrorKind::from(x).into()),
         }
     }
 }

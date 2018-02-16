@@ -7,9 +7,22 @@ pub mod context;
 pub mod table;
 pub mod partition;
 pub mod label;
+mod util;
 
 pub mod error {
-    error_chain!{}
+    error_chain!{
+        errors {
+            NativeError(err: u32) {
+                description("native error")
+                display("native error: '{}'", err)
+            }
+            
+            InvalidInput {
+                description("invalid input")
+                display("invalid input")
+            }
+        }
+    }
 }
 
 

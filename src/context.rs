@@ -1,10 +1,10 @@
 
 use std::ffi::CString;
-use std::io::{Error, ErrorKind, Result};
 use std::os::raw::c_int;
 use std::os::unix::ffi::OsStrExt;
 use std::path::Path;
 
+use error::*;
 use ffi;
 
 pub struct Context {
@@ -20,33 +20,31 @@ impl Context {
 
     pub fn assign_device<P: AsRef<Path>>(&mut self, path: P, readonly: bool) -> Result<()> {
         let c_path = CString::new(path.as_ref().as_os_str().as_bytes())
-            .map_err(|_| ErrorKind::InvalidInput)?;
-        let result = unsafe { ffi::fdisk_assign_device(self.ptr, c_path.as_ptr(), readonly as c_int)};
-        if result != 0 {
-            Err(Error::last_os_error())
-        } else {
-            Ok(())
+            .chain_err(|| ErrorKind::InvalidInput)?;
+        match unsafe {ffi::fdisk_assign_device(self.ptr, c_path.as_ptr(), readonly as c_int)} {
+            0 => Ok(()),
+            x => Err(ErrorKind::from(x).into()),
         }
     }
 
     pub fn deassign_device(&mut self, no_sync: bool) -> Result<()> {
         match unsafe { ffi::fdisk_deassign_device(self.ptr, no_sync as c_int) } {
             0 => Ok(()),
-            _ => Err(Error::last_os_error()),
+            x => Err(ErrorKind::from(x).into()),
         }
     }
 
     pub fn disable_dialogs(&mut self, disable: bool) -> Result<()> {
         match unsafe { ffi::fdisk_disable_dialogs(self.ptr, disable as c_int) } {
             0 => Ok(()),
-            _ => Err(Error::last_os_error())
+            x => Err(ErrorKind::from(x).into()),
         }
     }
 
     pub fn set_last_lba(&mut self, sector: u64) -> Result<()> {
         match unsafe { ffi::fdisk_set_last_lba(self.ptr, sector) } {
             0 => Ok(()),
-            _ => Err(Error::last_os_error())
+            x => Err(ErrorKind::from(x).into()),
         }
     }
 

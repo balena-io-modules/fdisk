@@ -1,11 +1,11 @@
 
 use ffi;
 
+use error::*;
 use context::Context;
 use partition::Partition;
 
 use std::mem;
-use std::io::{Error, Result};
 
 pub struct Table {
     ptr: *mut ffi::fdisk_table,
@@ -22,7 +22,7 @@ impl Table {
     pub fn remove_partition(&mut self, partition: &mut Partition) -> Result<()> {
         match unsafe { ffi::fdisk_table_remove_partition(self.ptr, partition.ptr) } {
             0 => Ok(()),
-            _ => Err(Error::last_os_error()),
+            x => Err(ErrorKind::from(x).into()),
         }
     }
 }
@@ -38,14 +38,14 @@ impl Context {
         let mut table = unsafe { ffi::fdisk_new_table() };
         match unsafe { ffi::fdisk_get_partitions(self.ptr, &mut table) } {
             0 => Ok(Table { ptr: table }),
-            _ => Err(Error::last_os_error()),
+            x => Err(ErrorKind::from(x).into()),
         }
     }
 
     pub fn apply_table(&mut self, table: &mut Table) -> Result<()> {
         match unsafe { ffi::fdisk_apply_table(self.ptr, table.ptr) } {
             0 => Ok(()),
-            _ => Err(Error::last_os_error()),
+            x => Err(ErrorKind::from(x).into()),
         }
     }
 }
