@@ -12,10 +12,30 @@ pub struct Table {
 }
 
 impl Table {
+    pub fn new() -> Table {
+        Table {
+            ptr: unsafe { ffi::fdisk_new_table() }
+        }
+    }
+
     pub fn iter<'a>(&'a mut self) -> Iter<'a> {
         Iter {
             table: self,
             ptr: unsafe { ffi::fdisk_new_iter(ffi::FDISK_ITER_FORWARD as i32) }
+        }
+    }
+
+    pub fn reset(&mut self) -> Result<()> {
+        match unsafe {ffi::fdisk_reset_table(self.ptr)} {
+            0 => Ok(()),
+            x => Err(ErrorKind::from(x).into()),
+        }
+    }
+
+    pub fn add_partition(&mut self, partition: &mut Partition) -> Result<()> {
+        match unsafe {ffi::fdisk_table_add_partition(self.ptr, partition.ptr)} {
+            0 => Ok(()),
+            x => Err(ErrorKind::from(x).into()),
         }
     }
 
@@ -35,9 +55,9 @@ impl Drop for Table {
 
 impl Context {
     pub fn get_partitions(&mut self) -> Result<Table> {
-        let mut table = unsafe { ffi::fdisk_new_table() };
-        match unsafe { ffi::fdisk_get_partitions(self.ptr, &mut table) } {
-            0 => Ok(Table { ptr: table }),
+        let mut table = Table::new();
+        match unsafe { ffi::fdisk_get_partitions(self.ptr, &mut table.ptr) } {
+            0 => Ok(table),
             x => Err(ErrorKind::from(x).into()),
         }
     }
