@@ -5,6 +5,7 @@ use error::*;
 
 use std::io::Error as IOError;
 use std::ffi::CStr;
+use std::ptr;
 
 pub struct Partition {
     pub(crate) ptr: *mut ffi::fdisk_partition,
@@ -99,6 +100,13 @@ impl Drop for Partition {
 use context::Context;
 
 impl Context {
+    pub fn add_partition(&mut self, p: &mut Partition) -> Result<()> {
+        match unsafe { ffi::fdisk_add_partition(self.ptr, p.ptr, ptr::null_mut()) } {
+            0 => Ok(()),
+            x => Err(ErrorKind::from(x).into()),
+        }
+    }
+
     pub fn delete_all_partitions(&mut self) -> Result<()> {
         match unsafe { ffi::fdisk_delete_all_partitions(self.ptr) } {
             0 => Ok(()),
