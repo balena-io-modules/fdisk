@@ -34,7 +34,10 @@ impl Table {
 
     pub fn add_partition(&mut self, partition: &mut Partition) -> Result<()> {
         match unsafe {ffi::fdisk_table_add_partition(self.ptr, partition.ptr)} {
-            0 => Ok(()),
+            0 => {
+                unsafe { ffi::fdisk_ref_partition(partition.ptr) };
+                Ok(())
+            },
             x => Err(ErrorKind::from(x).into()),
         }
     }
